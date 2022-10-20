@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style type="text/css">
+main{
+	float:right;
+}
+</style>
+</head>
+<body> 
+<?php
+  include ('connect.php'); //الاتصال بقاعدة البيانات
+  include ('index.php'); // عشان تكون تفس صفحة ايندكس ويطلع لك شريط المهام
+  error_reporting(0); //اخفاء ظهور الخطاء 
+  $n1=$_GET['n1'];
+  $re=$_GET['re'];
+?>
+<center>
+<label style="background:#FFFF00" > مرحبا بك   <?php echo $username; ?></label> <br> <!-- كود الترحيب-->
+<?php if($re==1){ ?> <label style="background:#3BB9FF">تم الطلب </label>
+<br>
+<?php } ?>
+ 
+<br>
+<h1></h1>
+<form action="book.php" method="get">
+<input type="search" id="n1" name="n1" value="<?php echo $n1 ?>"><!-- search هي نفس text بس الفرق تضيف لكعلامة الاكس لالغاء البحث <!-->
+<input type="submit" value="بحث ">
+ </form>
+<br>
+<?php
+$sql="SELECT * FROM Products   WHERE Produced_name like '%$n1%' or Product_Type like '%$n1%' or isbn like '%$n1%' or author_name like '%$n1%' ";  
+$result = $conn->query($sql);
+while($row = $result->fetch_assoc()) {
+?>
+<main>
+<table border=2>
+<tr>
+<td>
+<div class="card" style="width: 300px; height:450px;" >   
+<a href="one_products.php?id=<?php echo $row['id']; ?>">
+<img src="admin/Product_Picture/<?php echo $row['Product_Picture']; ?>" alt="Denim Jeans" style="width:100%;   left: 250px; height: 200px;"> <!-- لتنسيق صورالغلاف-->
+<h1><?php echo $row['Produced_name']; ?></h1> <!-- يظهر لي اسم الكتاب-->
+<p><?php echo $row['Product_Type']; ?></p>  <!-- يظهر لي اسم المولف-->
+<form method="post" action="admin/fun/add_Buy.php">  <!-- تفعيل زر الطلب-->
+<input type="hidden" name="user_name" value="<?php echo $username ; ?>">  <!-- يظهر لي في قاعدةالبيانات اسم اللي طلب الكتاب-->
+<input type="hidden" name="number_of_products" value="<?php echo $row['id']; ?>" > <!--يظهر لي في قاعدة البيانات رقم رقمالكتاب-->
+</tr>
+</td>
+</table>
+ </a>
+<?php
+if ($username!=='زائر') {
+
+?>
+ <p><button>طلب </button></p>
+<?php
+}
+?>
+ </form>
+
+</div>
+<?php
+}
+
+?>
+
+</center>
+</main>
+</body>
+</html>
